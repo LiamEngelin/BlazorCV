@@ -45,6 +45,10 @@ h1:focus {
 
 html, body {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     margin: 0;
     padding: 0;
     height: 100%;
@@ -62,10 +66,13 @@ html, body {
     border: 1px solid white; /* Grön border runt videon */
     overflow: hidden; /* Klipper överflödigt innehåll */
 }
+
 .background-video {
     position: relative; /* Placera videon inom containern */
     top: 0;
     left: 0;
+    min-width: 100%;
+    min-height: 100%;
     width: 100%; /* Fyller containern horisontellt */
     height: 100%; /* Fyller containern vertikalt */
     object-fit: cover; /* Fyller containern utan att förvränga */
@@ -81,8 +88,8 @@ html, body {
 .text-content {
     position: absolute; /* Placera text över videon */
     top: 50%; /* Centrera vertikalt */
-    left: 15%; /* Centrera horisontellt */
-    transform: translate(-50%, -50%); /* Perfekt centrering */
+    left: 3vw; /* Centrera horisontellt */
+    transform: translateY(-50%); /* Perfekt centrering */
     z-index: 2; /* Säkerställ att texten ligger över videon */
     display: flex;
     flex-direction: column;
@@ -92,25 +99,33 @@ html, body {
 }
 
 .text-content span{
-    font-size: 90px;
+    word-wrap: break-word;
+    flex-wrap: wrap;
+    justify-content: center;
     padding: 0;
     margin: 0;
     font-family: Velista;
 }
 
+#person-info span {
+    font-weight: 200;
+    font-size: 25px;
+}
+
 #work-title {
-    font-size: 40px;
+    font-size: 90px;
     font-family: Almera;
 }
 
-#first-name {
-    font-weight: 200;
+#pages-list {
+    right: 3vw;
+    align-items: flex-end;
 }
 
-#last-name {
-    font-weight: 200;
+#pages-list span {
+    padding: 25px;
+    font-size: 20px;
 }
-
 
 @font-face {
     font-family: "Almera";
@@ -134,4 +149,22 @@ html, body {
     font-family: "Velista";
     font-weight: 600;
     src: url(/fonts/VELISTA.ttf)
+}
+
+@media (min-width: 600px) {
+    #person-info span {
+        font-size: 60px;
+    }
+    #pages-list span {
+        font-size: 45px;
+    }   
+}
+
+@media (min-width: 1024px) {
+    #person-info span{
+        font-size: 100px;
+    }
+    #pages-list span {
+        font-size: 70px;
+    }
 }
