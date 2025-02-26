@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
 <div class="background-container">
     <video autoplay loop muted playsinline class="background-video">
@@ -6,7 +8,6 @@
     </video>
     @Body
 </div>
-
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.
