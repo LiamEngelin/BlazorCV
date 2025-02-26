@@ -28,6 +28,8 @@ h1:focus {
     border-color: #929292;
 }
 
+/*HOME PAGE*/
+
 @media (min-width: 768px) {
     .content {
         flex-direction: row; 
@@ -45,6 +47,10 @@ h1:focus {
 
 html, body {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     margin: 0;
     padding: 0;
     height: 100%;
@@ -62,10 +68,13 @@ html, body {
     border: 1px solid white; /* Grön border runt videon */
     overflow: hidden; /* Klipper överflödigt innehåll */
 }
+
 .background-video {
     position: relative; /* Placera videon inom containern */
     top: 0;
     left: 0;
+    min-width: 100%;
+    min-height: 100%;
     width: 100%; /* Fyller containern horisontellt */
     height: 100%; /* Fyller containern vertikalt */
     object-fit: cover; /* Fyller containern utan att förvränga */
@@ -78,11 +87,11 @@ html, body {
     min-height: 100vh; /* Fyller hela skärmhöjden */
 }
 
-.text-content {
+.text-content-home {
     position: absolute; /* Placera text över videon */
     top: 50%; /* Centrera vertikalt */
-    left: 15%; /* Centrera horisontellt */
-    transform: translate(-50%, -50%); /* Perfekt centrering */
+    left: 3vw; /* Centrera horisontellt */
+    transform: translateY(-50%); /* Perfekt centrering */
     z-index: 2; /* Säkerställ att texten ligger över videon */
     display: flex;
     flex-direction: column;
@@ -91,27 +100,96 @@ html, body {
     color: white; /* Vit text för kontrast mot mörk video */
 }
 
-.text-content span{
-    font-size: 90px;
+.text-content-home span, .text-content-home a{
+    word-wrap: break-word;
+    flex-wrap: wrap;
+    justify-content: center;
     padding: 0;
     margin: 0;
     font-family: Velista;
 }
 
+#first-name, #last-name {
+    font-weight: 200;
+    font-size: 25px;
+}
+
 #work-title {
-    font-size: 40px;
+    font-size: 13px;
     font-family: Almera;
 }
 
-#first-name {
-    font-weight: 200;
+#pages-list {
+    right: 3vw;
+    align-items: flex-end;
 }
 
-#last-name {
-    font-weight: 200;
+#pages-list a {
+    margin: 25px;
+    font-size: 20px;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    display: inline-block;
+}
+
+#pages-list a::after {
+    content: ''; /* Tomt pseudo-element för understrykning */
+    position: absolute; /* Positionerar under texten */
+    bottom: -2px; /* Avstånd under texten */
+    left: 50%; /* Startar i mitten */
+    width: 0; /* Börjar med noll bredd */
+    height: 1px; /* Tjocklek på linjen */
+    background-color: currentColor; /* Följer textens färg */
+    transition: width 1s ease; /* Animering enbart för bredd */
+    transform: translateX(-50%); /* Centrerar linjen */
+}
+
+#pages-list a:hover::after {
+    width: 100%; /* Full bredd av <a>-elementet */
 }
 
 
+
+@media (min-width: 600px) {
+    #first-name, #last-name{
+        font-size: 55px;
+    }
+    #work-title {
+        font-size: 25px;
+    }
+    #pages-list a {
+        font-size: 45px;
+    }   
+}
+
+@media (min-width: 1024px) {
+    #first-name, #last-name {
+        font-size: 85px;
+    }
+    #work-title {
+        font-size: 40px;
+    }
+    #pages-list a {
+        font-size: 70px;
+    }
+}
+
+/*ABOUT PAGE*/
+.text-content-about {
+    position: absolute; /* Placera text över videon */
+    top: 50%; /* Centrera vertikalt */
+    left: 3vw; /* Centrera horisontellt */
+    transform: translateY(-50%); /* Perfekt centrering */
+    z-index: 2; /* Säkerställ att texten ligger över videon */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    color: white; /* Vit text för kontrast mot mörk video */
+}
+
+/*GLOBAL */
 @font-face {
     font-family: "Almera";
     font-weight: 400;
