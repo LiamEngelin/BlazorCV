@@ -178,15 +178,73 @@ html, body {
 /*ABOUT PAGE*/
 .text-content-about {
     position: absolute; /* Placera text över videon */
-    top: 50%; /* Centrera vertikalt */
-    left: 3vw; /* Centrera horisontellt */
-    transform: translateY(-50%); /* Perfekt centrering */
+    top: 5%; /* Centrera vertikalt */
+    left: 50%;
+    transform: translateX(-50%); /* Perfekt centrering horizont */
     z-index: 2; /* Säkerställ att texten ligger över videon */
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    align-items: center;
+    color: white; /* Vit text för kontrast mot mörk video */
+}
+
+.about-me-text {
+    position: absolute; /* Placera text över videon */
+    top: 20%; 
+    left: 40%;
+    transform: translateX(-50%); /* Perfekt centrering horizont */
+    z-index: 2; /* Säkerställ att texten ligger över videon */
+    display: flex;
+    flex-direction: column;
     align-items: flex-start;
     color: white; /* Vit text för kontrast mot mörk video */
+    font-size: 20px;
+    text-align: left;
+}
+
+#about-me {
+    font-size: 50px;
+}
+
+#socials {
+    position: absolute;
+    top: 95%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    text-align: center;
+}
+
+#socials a {
+    display: inline-block;
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    margin: 0 10px;
+}
+
+.card {
+    position: absolute;
+    z-index: 2;
+    top:50%;
+    background: black;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+}
+
+.card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.card ul li {
+    background: #2b2b2b;
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 6px;
 }
 
 /*GLOBAL */
