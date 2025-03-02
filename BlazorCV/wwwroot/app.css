@@ -206,6 +206,17 @@ html, body {
     font-size: 50px;
 }
 
+.go-back-button {
+    position: absolute;
+    z-index: 2;
+    top: 5%;
+    left: 2%;
+    font-size: 20px;
+    text-decoration: none;
+    color: white;
+    display: inline-block;
+}
+
 #socials {
     position: absolute;
     top: 95%;
@@ -244,10 +255,11 @@ html, body {
 
 .card ul li {
     background: #2b2b2b;
-    margin: 5px 0;
+    margin: 14px 0;
     padding: 8px;
     border-radius: 6px;
     color: white;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
 /*GLOBAL */
