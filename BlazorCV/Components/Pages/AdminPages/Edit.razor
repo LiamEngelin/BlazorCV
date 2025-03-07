@@ -1,0 +1,41 @@
+﻿@page "/admin/edit"
+@inject NavigationManager NavigationManager
+
+<h3>Edit Item</h3>
+
+<div>
+    <label for="itemId">Item ID:</label>
+    <input type="number" @bind="itemId" id="itemId" class="form-control" />
+
+    <label for="itemBody">New Body:</label>
+    <textarea @bind="newBody" id="itemBody" class="form-control"></textarea>
+
+    <button class="btn" @onclick="EditItem">Submit Changes</button>
+</div>
+
+@if (!string.IsNullOrEmpty(responseMessage))
+{
+    <div class="alert alert-info">
+        @responseMessage
+    </div>
+}
+
+@code {
+    private int itemId;
+    private string newBody;
+    private string responseMessage;
+
+    private async Task EditItem()
+    {
+        if (itemId > 0 && !string.IsNullOrEmpty(newBody))
+        {
+            // Här skulle du göra ditt API-anrop för att uppdatera objektet
+            // Placeholder: Skicka anropet till API för att uppdatera objektet
+            responseMessage = "Item updated successfully!";
+        }
+        else
+        {
+            responseMessage = "Please fill in both fields!";
+        }
+    }
+}

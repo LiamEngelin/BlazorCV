@@ -1,4 +1,5 @@
 using BlazorCV.Components;
+using BlazorCV.Services;
 
 namespace BlazorCV;
 
@@ -11,9 +12,10 @@ public class Program
         // Add services to the container.
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
+        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("API URL HÄR") });
+        builder.Services.AddScoped<ProjectService>();
 
         var app = builder.Build();
-
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
         {
