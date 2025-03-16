@@ -1,9 +1,32 @@
 ﻿@page "/projects"
+@inject ProjectService ProjectService
+
 
 <PageTitle>Projects</PageTitle>
 
 <h3>Projects</h3>
 
-@code {
+<section id="projects">
+	@if (ProjectsList == null || ProjectsList.Count == 0)
+	{
+		<p>Loading projects...</p>
+	}
+	else
+	{
+		<ul class="projectsUl">
+			@foreach (var project in ProjectsList)
+			{
+				<li class="projectListItem">@project.Name</li>
+			}
+		</ul>
+	}
+</section>
 
+@code {
+	private List<Project> ProjectsList = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		ProjectsList = await ProjectService.GetProjects();
+	}
 }
