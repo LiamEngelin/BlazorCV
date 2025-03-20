@@ -1,17 +1,14 @@
-﻿@page "/admin/edit"
+﻿@page "/admin/create"
 @inject NavigationManager NavigationManager
 @inject HttpClient HttpClient
 
-<h3 style="z-index: 2; position: absolute; color: white; transform: translateX(-50%); left: 50%; top: 15%;">Edit Item</h3>
+<h3 style="z-index: 2; position: absolute; color: white; transform: translateX(-50%); left: 50%; top: 15%;">Create Project</h3>
 
 <div class="formDiv">
-    <label for="itemId">Item ID:</label>
-    <input type="number" @bind="itemId" id="itemId" class="form-control" />
+    <label for="projectBody">Body:</label>
+    <textarea @bind="newBody" id="projectBody" class="form-control" rows="10"></textarea>
 
-    <label for="itemBody">New Body:</label>
-    <textarea @bind="newBody" id="itemBody" class="form-control" rows="10"></textarea>
-
-    <button class="btn text-white" id="submitbtn" @onclick="EditItem">Submit Changes</button>
+    <button class="btn text-white" id="submitbtn" @onclick="CreateProject">Submit Changes</button>
 </div>
 
 @if (!string.IsNullOrEmpty(responseMessage))
@@ -22,7 +19,7 @@
 }
 
 @code {
-    private int itemId;
+    private int projectId;
     private string newBody;
     private string responseMessage;
 
@@ -42,21 +39,15 @@
             });
     }
 
-    private async Task EditItem()
+    private async Task CreateProject()
     {
-        if (itemId <= 0 || string.IsNullOrEmpty(newBody))
-        {
-            responseMessage = "Please fill in both fields with valid data!";
-            return;
-        }
-
         try
         {
             // Skapa JSON-innehållet att skicka till API:et
             var content = new StringContent(newBody, System.Text.Encoding.UTF8, "application/json");
 
             // Skicka PUT-anrop till API:et (anpassa URL efter ditt API)
-            var response = await HttpClient.PutAsync($"https://liamcvapi-cme8dudygag9a4fg.westeurope-01.azurewebsites.net/api/project/{itemId}", content);
+            var response = await HttpClient.PostAsync($"https://liamcvapi-cme8dudygag9a4fg.westeurope-01.azurewebsites.net/api/project/", content);
 
             if (response.IsSuccessStatusCode)
             {

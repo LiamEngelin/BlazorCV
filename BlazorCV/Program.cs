@@ -1,5 +1,6 @@
 using BlazorCV.Components;
 using BlazorCV.Services;
+using Microsoft.AspNetCore.Components;
 
 namespace BlazorCV;
 
