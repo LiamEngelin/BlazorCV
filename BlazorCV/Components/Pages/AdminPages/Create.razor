@@ -1,14 +1,21 @@
 ﻿@page "/admin/create"
 @inject NavigationManager NavigationManager
 @inject HttpClient HttpClient
+@rendermode InteractiveServer
 
 <h3 style="z-index: 2; position: absolute; color: white; transform: translateX(-50%); left: 50%; top: 15%;">Create Project</h3>
 
 <div class="formDiv">
     <label for="projectBody">Body:</label>
-    <textarea @bind="newBody" id="projectBody" class="form-control" rows="10"></textarea>
+    <textarea @bind="newProjectBody" id="projectBody" class="form-control" rows="10" cols="40" placeholder='[
+    {
+        "id" : 0,
+        "name" : "string",
+        "description": "string"
+    }
+]'></textarea>
 
-    <button class="btn text-white" id="submitbtn" @onclick="CreateProject">Submit Changes</button>
+    <button class="btn text-white" id="submitbtn" @onclick="CreateProject">Create Project</button>
 </div>
 
 @if (!string.IsNullOrEmpty(responseMessage))
@@ -20,23 +27,19 @@
 
 @code {
     private int projectId;
-    private string newBody;
+    private string newProjectBody;
     private string responseMessage;
 
     protected override void OnInitialized()
     {
-        // Definiera schemat som ett objekt
-        var schema = new
-        {
-            name = "string",
-            description = "string"
-        };
-
         // Sätt newBody till JSON-strängen med formatering
-        newBody = System.Text.Json.JsonSerializer.Serialize(schema, new System.Text.Json.JsonSerializerOptions
+        newProjectBody = @"[
             {
-                WriteIndented = true
-            });
+                ""id"": 0,
+                ""name"": ""Enter project name"",
+                ""description"": ""Enter project description""
+            }
+        ]";
     }
 
     private async Task CreateProject()
@@ -44,9 +47,9 @@
         try
         {
             // Skapa JSON-innehållet att skicka till API:et
-            var content = new StringContent(newBody, System.Text.Encoding.UTF8, "application/json");
+            var content = new StringContent(newProjectBody, System.Text.Encoding.UTF8, "application/json");
 
-            // Skicka PUT-anrop till API:et (anpassa URL efter ditt API)
+            // Skicka POST-anrop till API
             var response = await HttpClient.PostAsync($"https://liamcvapi-cme8dudygag9a4fg.westeurope-01.azurewebsites.net/api/project/", content);
 
             if (response.IsSuccessStatusCode)
