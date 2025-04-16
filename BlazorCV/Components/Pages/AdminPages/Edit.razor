@@ -1,75 +1,64 @@
 ﻿@page "/admin/edit"
 @inject NavigationManager NavigationManager
-@inject HttpClient HttpClient
+@inject HttpClient http
 
-<h3 style="z-index: 2; position: absolute; color: white; transform: translateX(-50%); left: 50%; top: 15%;">Edit Item</h3>
+<h3 style="z-index: 2; position: absolute; color: white; transform: translateX(-50%); left: 50%; top: 15%;">Create Project</h3>
+<div class="container-fluid" style="z-index:200;">
+    <EditForm Model="newProject" OnValidSubmit="() => UpdateProject(newProject)">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-<div class="formDiv">
-    <label for="itemId">Item ID:</label>
-    <input type="number" @bind="itemId" id="itemId" class="form-control" />
+        <div class="form-group">
+            <label for="projectName">Name</label>
+            <InputNumber id="ProjectId" class="form-control"
+                       @bind-Value="newProject.Id" />
+        </div>
 
-    <label for="itemBody">New Body:</label>
-    <textarea @bind="newBody" id="itemBody" class="form-control" rows="10"></textarea>
+        <div class="form-group">
+            <label for="projectName">Name</label>
+            <InputText id="projectName" class="form-control"
+            @bind-Value="newProject.Name" />
+        </div>
 
-    <button class="btn text-white" id="submitbtn" @onclick="EditItem">Submit Changes</button>
+        <div class="form-group">
+            <label for="projectDescription">Description</label>
+            <InputText id="projectDescription" class="form-control" rows="5"
+            @bind-Value="newProject.Description" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Create Project
+        </button>
+    </EditForm>
 </div>
 
-@if (!string.IsNullOrEmpty(responseMessage))
-{
-    <div class="alert alert-info">
-        @responseMessage
-    </div>
-}
-
 @code {
-    private int itemId;
-    private string newBody;
-    private string responseMessage;
+
+    private Project newProject = new Project();
 
     protected override void OnInitialized()
     {
-        // Definiera schemat som ett objekt
-        var schema = new
-        {
-            name = "string",
-            description = "string"
-        };
+       
 
-        // Sätt newBody till JSON-strängen med formatering
-        newBody = System.Text.Json.JsonSerializer.Serialize(schema, new System.Text.Json.JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
     }
+     
 
-    private async Task EditItem()
+    private async Task UpdateProject(Project updatedProject)
     {
-        if (itemId <= 0 || string.IsNullOrEmpty(newBody))
-        {
-            responseMessage = "Please fill in both fields with valid data!";
-            return;
-        }
+        var response = await http.PutAsJsonAsync($"https://blazorcv-api-cmf3g6h8ffb7emdc.swedencentral-01.azurewebsites.net/api/project/{newProject.Id}", updatedProject);
 
-        try
+        if (response.IsSuccessStatusCode)
         {
-            // Skapa JSON-innehållet att skicka till API:et
-            var content = new StringContent(newBody, System.Text.Encoding.UTF8, "application/json");
-
-            // Skicka PUT-anrop till API:et (anpassa URL efter ditt API)
-            var response = await HttpClient.PutAsync($"https://liamcvapi-cme8dudygag9a4fg.westeurope-01.azurewebsites.net/api/project/{itemId}", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                responseMessage = "Item updated successfully!";
-            }
-            else
-            {
-                responseMessage = $"Failed to update item. Status code: {response.StatusCode}";
-            }
+            newProject.Name = "";
+            newProject.Description = "";
+            StateHasChanged();
+            Console.WriteLine("project updated:" + newProject.Name);
         }
-        catch (Exception ex)
+        else
         {
-            responseMessage = $"An error occurred: {ex.Message}";
+            StateHasChanged();
+            Console.WriteLine("Error updating project: " + response.StatusCode);
         }
+        
     }
 }

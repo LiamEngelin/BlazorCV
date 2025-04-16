@@ -1,69 +1,65 @@
 ﻿@page "/admin/create"
 @inject NavigationManager NavigationManager
-@inject HttpClient HttpClient
+@inject HttpClient http
 @rendermode InteractiveServer
 
 <h3 style="z-index: 2; position: absolute; color: white; transform: translateX(-50%); left: 50%; top: 15%;">Create Project</h3>
+<div class="container-fluid" style="z-index:200;">
+    <EditForm Model="newProject" OnValidSubmit="CreateProject">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-<div class="formDiv">
-    <label for="projectBody">Body:</label>
-    <textarea @bind="newProjectBody" id="projectBody" class="form-control" rows="10" cols="40" placeholder='[
-    {
-        "id" : 0,
-        "name" : "string",
-        "description": "string"
-    }
-]'></textarea>
+        <div class="form-group">
+            <label for="projectName">Name</label>
+            <InputText id="projectName" class="form-control"
+            @bind-Value="newProject.Name" />
+        </div>
 
-    <button class="btn text-white" id="submitbtn" @onclick="CreateProject">Create Project</button>
+        <div class="form-group">
+            <label for="projectDescription">Description</label>
+            <InputText id="projectDescription" class="form-control" rows="5"
+            @bind-Value="newProject.Description" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Create Project
+        </button>
+    </EditForm>
 </div>
 
-@if (!string.IsNullOrEmpty(responseMessage))
-{
-    <div class="alert alert-info">
-        @responseMessage
-    </div>
-}
-
 @code {
-    private int projectId;
-    private string newProjectBody;
-    private string responseMessage;
+    private Project newProject = new Project();
 
     protected override void OnInitialized()
     {
-        // Sätt newBody till JSON-strängen med formatering
-        newProjectBody = @"[
-            {
-                ""id"": 0,
-                ""name"": ""Enter project name"",
-                ""description"": ""Enter project description""
-            }
-        ]";
+
+
     }
 
     private async Task CreateProject()
     {
         try
         {
-            // Skapa JSON-innehållet att skicka till API:et
-            var content = new StringContent(newProjectBody, System.Text.Encoding.UTF8, "application/json");
 
-            // Skicka POST-anrop till API
-            var response = await HttpClient.PostAsync($"https://liamcvapi-cme8dudygag9a4fg.westeurope-01.azurewebsites.net/api/project/", content);
 
+            var response = await http.PostAsJsonAsync("https://blazorcv-api-cmf3g6h8ffb7emdc.swedencentral-01.azurewebsites.net/api/project", newProject);
             if (response.IsSuccessStatusCode)
             {
-                responseMessage = "Item updated successfully!";
+                newProject.Name = "";
+                newProject.Description = "";
+                StateHasChanged();
+                Console.WriteLine("project created:" + newProject.Name);
+                
             }
             else
             {
-                responseMessage = $"Failed to update item. Status code: {response.StatusCode}";
+                StateHasChanged();
+                Console.WriteLine("Error creating project: " + response.StatusCode);
             }
         }
         catch (Exception ex)
         {
-            responseMessage = $"An error occurred: {ex.Message}";
+            Console.WriteLine("Exception: " + ex.Message);
         }
     }
 }
