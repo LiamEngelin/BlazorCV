@@ -13,7 +13,7 @@ public class Program
         // Add services to the container.
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
-        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://liamcvapi-cme8dudygag9a4fg.westeurope-01.azurewebsites.net/") });
+        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("blazorcv-api-cmf3g6h8ffb7emdc.swedencentral-01.azurewebsites.net") });
         builder.Services.AddScoped<ProjectService>();
 
         var app = builder.Build();
