@@ -1,65 +1,83 @@
 ﻿@page "/admin/create"
-@inject NavigationManager NavigationManager
-@inject HttpClient http
+@inject ProjectService ProjectService
+@inject SkillService SkillService
 @rendermode InteractiveServer
 
-<h3 style="z-index: 2; position: absolute; color: white; transform: translateX(-50%); left: 50%; top: 15%;">Create Project</h3>
-<div class="container-fluid" style="z-index:200;">
-    <EditForm Model="newProject" OnValidSubmit="CreateProject">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+<h3 class="admin-header">Skapa Project eller Skill</h3>
 
+<div class="formDiv">
+    <form onsubmit="return false">
+        <!-- Välj typ -->
         <div class="form-group">
-            <label for="projectName">Name</label>
-            <InputText id="projectName" class="form-control"
-            @bind-Value="newProject.Name" />
+            <label>Typ</label>
+            <select class="form-control" @bind="selectedType">
+                <option value="project">Project</option>
+                <option value="skill">Skill</option>
+            </select>
         </div>
 
-        <div class="form-group">
-            <label for="projectDescription">Description</label>
-            <InputText id="projectDescription" class="form-control" rows="5"
-            @bind-Value="newProject.Description" />
-        </div>
+        <!-- Formulär för Project -->
+        @if (selectedType == "project")
+        {
+            <InputText class="form-control mt-2" placeholder="Name" @bind-Value="newProject.Name" />
+            <InputText class="form-control mt-2" placeholder="Description" @bind-Value="newProject.Description" />
+        }
 
-        <button type="submit" class="btn btn-primary">
-            Create Project
-        </button>
-    </EditForm>
+        <!-- Formulär för Skill -->
+        @if (selectedType == "skill")
+        {
+            <InputText class="form-control mt-2" placeholder="Name" @bind-Value="newSkill.Name" />
+            <InputText class="form-control mt-2" placeholder="Level" @bind-Value="newSkill.Level" />
+            <InputNumber class="form-control mt-2" placeholder="Years" @bind-Value="newSkill.Years" />
+        }
+
+        <button class="btn btn-success mt-3" type="button" @onclick="CreateItem">Skapa</button>
+
+        @if (!string.IsNullOrEmpty(statusMessage))
+        {
+            <div class="alert mt-3">@statusMessage</div>
+        }
+    </form>
 </div>
 
 @code {
-    private Project newProject = new Project();
+    private string selectedType = "project";
+    private string statusMessage = "";
 
-    protected override void OnInitialized()
+    private Project newProject = new();
+    private Skill newSkill = new();
+
+    private async Task CreateItem()
     {
+        statusMessage = "";
 
-
-    }
-
-    private async Task CreateProject()
-    {
         try
         {
+            bool success;
 
-
-            var response = await http.PostAsJsonAsync("https://cvapi-h8g2cyhdg0duatgb.swedencentral-01.azurewebsites.net/api/project", newProject);
-            if (response.IsSuccessStatusCode)
+            if (selectedType == "project")
             {
-                newProject.Name = "";
-                newProject.Description = "";
-                StateHasChanged();
-                Console.WriteLine("project created:" + newProject.Name);
-                
+                success = await ProjectService.AddProject(newProject);
             }
             else
             {
-                StateHasChanged();
-                Console.WriteLine("Error creating project: " + response.StatusCode);
+                success = await SkillService.AddSkill(newSkill);
+            }
+
+            if (success)
+            {
+                statusMessage = $"{selectedType.ToUpper()} skapades!";
+                newProject = new();
+                newSkill = new();
+            }
+            else
+            {
+                statusMessage = "Fel vid skapande.";
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Exception: " + ex.Message);
+            statusMessage = $"Fel: {ex.Message}";
         }
     }
 }

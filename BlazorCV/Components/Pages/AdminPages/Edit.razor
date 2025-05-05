@@ -1,104 +1,100 @@
 ﻿@page "/admin/edit"
-@inject HttpClient http
+@inject ProjectService ProjectService
+@inject SkillService SkillService
 @rendermode InteractiveServer
 
-<h3 style="z-index: 2; position: absolute; color: white; transform: translateX(-50%); left: 50%; top: 15%;">Edit Project</h3>
+<h3 class="admin-header">Redigera Project eller Skill</h3>
 
-<div class="container-fluid" style="z-index:200;">
-    <EditForm Model="editProject" OnValidSubmit="UpdateProject">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
+<div class="formDiv">
+    <form onsubmit="return false">
         <div class="form-group">
-            <label for="projectId">Project ID</label>
-            <InputNumber id="projectId" class="form-control"
-                         @bind-Value="projectId" />
-            <button class="btn btn-secondary mt-2" type="button" @onclick="LoadProject">
-                Ladda projekt
-            </button>
+            <label>Typ</label>
+            <select class="form-control" @bind="selectedType">
+                <option value="project">Project</option>
+                <option value="skill">Skill</option>
+            </select>
         </div>
 
-        @if (projectLoaded)
+        <InputNumber class="form-control" placeholder="ID" @bind-Value="itemId" />
+        <button class="btn mt-2" type="button" @onclick="LoadItem">Ladda</button>
+
+        @if (itemLoaded && selectedType == "project")
         {
-            <div class="form-group mt-3">
-                <label for="projectName">Name</label>
-                <InputText id="projectName" class="form-control"
-                           @bind-Value="editProject.Name" />
-            </div>
-
-            <div class="form-group">
-                <label for="projectDescription">Description</label>
-                <InputText id="projectDescription" class="form-control"
-                           @bind-Value="editProject.Description" />
-            </div>
-
-            <button type="submit" class="btn btn-primary mt-2">
-                Spara ändringar
-            </button>
+            <InputText class="form-control mt-2" placeholder="Name" @bind-Value="editProject.Name" />
+            <InputText class="form-control" placeholder="Description" @bind-Value="editProject.Description" />
         }
-    </EditForm>
 
-    @if (!string.IsNullOrEmpty(statusMessage))
-    {
-        <p class="mt-3">@statusMessage</p>
-    }
+        @if (itemLoaded && selectedType == "skill")
+        {
+            <InputText class="form-control mt-2" placeholder="Name" @bind-Value="editSkill.Name" />
+            <InputText class="form-control" placeholder="Level" @bind-Value="editSkill.Level" />
+            <InputNumber class="form-control" placeholder="Years" @bind-Value="editSkill.Years" />
+        }
+
+        @if (itemLoaded)
+        {
+            <button class="btn mt-3" type="button" @onclick="UpdateItem">Spara ändringar</button>
+        }
+
+        @if (!string.IsNullOrEmpty(statusMessage))
+        {
+            <div class="alert mt-3">@statusMessage</div>
+        }
+    </form>
 </div>
 
 @code {
-    private int projectId;
-    private Project editProject = new Project();
-    private bool projectLoaded = false;
+    private string selectedType = "project";
+    private int itemId;
+    private bool itemLoaded = false;
     private string statusMessage = "";
 
-    private async Task LoadProject()
+    private Project editProject = new();
+    private Skill editSkill = new();
+
+    private async Task LoadItem()
     {
+        itemLoaded = false;
         statusMessage = "";
 
         try
         {
-            var response = await http.GetAsync($"https://cvapi-h8g2cyhdg0duatgb.swedencentral-01.azurewebsites.net/api/project/{projectId}");
-            if (response.IsSuccessStatusCode)
+            if (selectedType == "project")
             {
-                var project = await response.Content.ReadFromJsonAsync<Project>();
-                if (project != null)
-                {
-                    editProject = project;
-                    projectLoaded = true;
-                }
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                statusMessage = $"Projekt med ID {projectId} hittades inte.";
+                var list = await ProjectService.GetProjects();
+                editProject = list.FirstOrDefault(p => p.Id == itemId) ?? new();
+                itemLoaded = editProject.Id != 0;
             }
             else
             {
-                statusMessage = $"Fel vid hämtning: {response.StatusCode}";
+                var list = await SkillService.GetSkills();
+                editSkill = list.FirstOrDefault(s => s.Id == itemId) ?? new();
+                itemLoaded = editSkill.Id != 0;
             }
+
+            if (!itemLoaded)
+                statusMessage = $"{selectedType.ToUpper()} med ID {itemId} hittades inte.";
         }
         catch (Exception ex)
         {
-            statusMessage = $"Fel: {ex.Message}";
+            statusMessage = $"Fel vid hämtning: {ex.Message}";
         }
     }
 
-    private async Task UpdateProject()
+    private async Task UpdateItem()
     {
-        statusMessage = "";
-
         try
         {
-            var response = await http.PutAsJsonAsync(
-                $"https://cvapi-h8g2cyhdg0duatgb.swedencentral-01.azurewebsites.net/api/project/{editProject.Id}",
-                editProject);
+            bool success;
 
-            if (response.IsSuccessStatusCode)
-            {
-                statusMessage = "Projektet uppdaterades!";
-            }
+            if (selectedType == "project")
+                success = await ProjectService.EditProject(editProject);
             else
-            {
-                statusMessage = $"Fel vid uppdatering: {response.StatusCode}";
-            }
+                success = await SkillService.EditSkill(editSkill);
+
+            statusMessage = success
+                ? "Uppdateringen lyckades!"
+                : "Fel vid uppdatering.";
         }
         catch (Exception ex)
         {

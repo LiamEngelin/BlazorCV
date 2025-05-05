@@ -15,6 +15,8 @@ public class Program
             .AddInteractiveServerComponents();
         builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://cvapi-h8g2cyhdg0duatgb.swedencentral-01.azurewebsites.net/") });
         builder.Services.AddScoped<ProjectService>();
+        builder.Services.AddScoped<SkillService>();
+        builder.WebHost.CaptureStartupErrors(true);
 
         var app = builder.Build();
         // Configure the HTTP request pipeline.
