@@ -263,19 +263,47 @@ html, body {
 }
 
 /*Projects*/
-.projectsUl {
-    position: absolute;
-    transform: translateX(-50%);
-    z-index: 2;
-    top: 30%;
-    left: 50%;
-    padding: 20px;
-    text-align: center;
-    list-style-type: none;
+.projects-page {
+    display: block; 
+    width: 100%;
 }
 
-.projectListItem {
-    color: white;
+.projects-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.project-card {
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    width: 280px;
+    padding: 1.5rem;
+    text-align: center;
+    color: #111;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    z-index: 2;
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    z-index: 2;
+}
+
+.project-card h4 {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    z-index: 2;
+}
+
+.project-card p {
+    font-size: 0.95rem;
+    color: #333;
+    z-index: 2;
 }
 
 /*Admin*/

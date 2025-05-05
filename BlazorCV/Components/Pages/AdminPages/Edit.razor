@@ -1,64 +1,108 @@
 ﻿@page "/admin/edit"
-@inject NavigationManager NavigationManager
 @inject HttpClient http
+@rendermode InteractiveServer
 
-<h3 style="z-index: 2; position: absolute; color: white; transform: translateX(-50%); left: 50%; top: 15%;">Create Project</h3>
+<h3 style="z-index: 2; position: absolute; color: white; transform: translateX(-50%); left: 50%; top: 15%;">Edit Project</h3>
+
 <div class="container-fluid" style="z-index:200;">
-    <EditForm Model="newProject" OnValidSubmit="() => UpdateProject(newProject)">
+    <EditForm Model="editProject" OnValidSubmit="UpdateProject">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
         <div class="form-group">
-            <label for="projectName">Name</label>
-            <InputNumber id="ProjectId" class="form-control"
-                       @bind-Value="newProject.Id" />
+            <label for="projectId">Project ID</label>
+            <InputNumber id="projectId" class="form-control"
+                         @bind-Value="projectId" />
+            <button class="btn btn-secondary mt-2" type="button" @onclick="LoadProject">
+                Ladda projekt
+            </button>
         </div>
 
-        <div class="form-group">
-            <label for="projectName">Name</label>
-            <InputText id="projectName" class="form-control"
-            @bind-Value="newProject.Name" />
-        </div>
+        @if (projectLoaded)
+        {
+            <div class="form-group mt-3">
+                <label for="projectName">Name</label>
+                <InputText id="projectName" class="form-control"
+                           @bind-Value="editProject.Name" />
+            </div>
 
-        <div class="form-group">
-            <label for="projectDescription">Description</label>
-            <InputText id="projectDescription" class="form-control" rows="5"
-            @bind-Value="newProject.Description" />
-        </div>
+            <div class="form-group">
+                <label for="projectDescription">Description</label>
+                <InputText id="projectDescription" class="form-control"
+                           @bind-Value="editProject.Description" />
+            </div>
 
-        <button type="submit" class="btn btn-primary">
-            Create Project
-        </button>
+            <button type="submit" class="btn btn-primary mt-2">
+                Spara ändringar
+            </button>
+        }
     </EditForm>
+
+    @if (!string.IsNullOrEmpty(statusMessage))
+    {
+        <p class="mt-3">@statusMessage</p>
+    }
 </div>
 
 @code {
+    private int projectId;
+    private Project editProject = new Project();
+    private bool projectLoaded = false;
+    private string statusMessage = "";
 
-    private Project newProject = new Project();
-
-    protected override void OnInitialized()
+    private async Task LoadProject()
     {
-       
+        statusMessage = "";
 
+        try
+        {
+            var response = await http.GetAsync($"https://cvapi-h8g2cyhdg0duatgb.swedencentral-01.azurewebsites.net/api/project/{projectId}");
+            if (response.IsSuccessStatusCode)
+            {
+                var project = await response.Content.ReadFromJsonAsync<Project>();
+                if (project != null)
+                {
+                    editProject = project;
+                    projectLoaded = true;
+                }
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                statusMessage = $"Projekt med ID {projectId} hittades inte.";
+            }
+            else
+            {
+                statusMessage = $"Fel vid hämtning: {response.StatusCode}";
+            }
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Fel: {ex.Message}";
+        }
     }
-     
 
-    private async Task UpdateProject(Project updatedProject)
+    private async Task UpdateProject()
     {
-        var response = await http.PutAsJsonAsync($"https://blazorcv-api-cmf3g6h8ffb7emdc.swedencentral-01.azurewebsites.net/api/project/{newProject.Id}", updatedProject);
+        statusMessage = "";
 
-        if (response.IsSuccessStatusCode)
+        try
         {
-            newProject.Name = "";
-            newProject.Description = "";
-            StateHasChanged();
-            Console.WriteLine("project updated:" + newProject.Name);
+            var response = await http.PutAsJsonAsync(
+                $"https://cvapi-h8g2cyhdg0duatgb.swedencentral-01.azurewebsites.net/api/project/{editProject.Id}",
+                editProject);
+
+            if (response.IsSuccessStatusCode)
+            {
+                statusMessage = "Projektet uppdaterades!";
+            }
+            else
+            {
+                statusMessage = $"Fel vid uppdatering: {response.StatusCode}";
+            }
         }
-        else
+        catch (Exception ex)
         {
-            StateHasChanged();
-            Console.WriteLine("Error updating project: " + response.StatusCode);
+            statusMessage = $"Fel: {ex.Message}";
         }
-        
     }
 }
