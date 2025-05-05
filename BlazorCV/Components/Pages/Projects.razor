@@ -1,32 +1,48 @@
 ﻿@page "/projects"
 @inject ProjectService ProjectService
 
-
 <PageTitle>Projects</PageTitle>
 
-<h3>Projects</h3>
+<div class="projects-page">
+    <h2 class="text-center mt-4">My Projects</h2>
 
-<section id="projects">
-	@if (ProjectsList == null || ProjectsList.Count == 0)
-	{
-		<p>Loading projects...</p>
-	}
-	else
-	{
-		<ul class="projectsUl">
-			@foreach (var project in ProjectsList)
-			{
-				<li class="projectListItem">@project.Name</li>
-			}
-		</ul>
-	}
-</section>
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger text-center">@errorMessage</div>
+    }
+    else if (ProjectsList == null || ProjectsList.Count == 0)
+    {
+        <p class="text-center">Loading projects...</p>
+    }
+    else
+    {
+        <div class="projects-wrapper">
+            @foreach (var project in ProjectsList)
+            {
+                if (project == null) continue;
+
+                <div class="project-card">
+                    <h4>@project.Name</h4>
+                    <p>@project.Description</p>
+                </div>
+            }
+        </div>
+    }
+</div>
 
 @code {
-	private List<Project> ProjectsList = new();
+    private List<Project> ProjectsList = new();
+    private string errorMessage;
 
-	protected override async Task OnInitializedAsync()
-	{
-		ProjectsList = await ProjectService.GetProjects();
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            ProjectsList = await ProjectService.GetProjects();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Kunde inte ladda projekt: " + ex.Message;
+        }
+    }
 }

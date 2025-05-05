@@ -1,5 +1,6 @@
 using BlazorCV.Components;
 using BlazorCV.Services;
+using Microsoft.AspNetCore.Components;
 
 namespace BlazorCV;
 
@@ -12,7 +13,7 @@ public class Program
         // Add services to the container.
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
-        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://liamcvapi-cme8dudygag9a4fg.westeurope-01.azurewebsites.net/") });
+        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://cvapi-h8g2cyhdg0duatgb.swedencentral-01.azurewebsites.net/") });
         builder.Services.AddScoped<ProjectService>();
 
         var app = builder.Build();

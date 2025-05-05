@@ -1,0 +1,60 @@
+﻿@page "/admin/delete"
+@inject NavigationManager NavigationManager
+@inject HttpClient http
+@rendermode InteractiveServer
+
+<h3 style="z-index: 2; position: absolute; color: white; transform: translateX(-50%); left: 50%; top: 15%;">Delete Project</h3>
+
+<div class="container-fluid" style="z-index:200;">
+    <EditForm Model="deleteProject" OnValidSubmit="DeleteProject">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="projectId">Project ID</label>
+            <InputNumber id="projectId" class="form-control"
+                         @bind-Value="deleteProject.Id" />
+        </div>
+
+        <button type="submit" class="btn btn-danger">
+            Delete Project
+        </button>
+    </EditForm>
+</div>
+
+@code {
+    private Skill deleteProject = new Skill();
+
+    private async Task DeleteProject()
+    {
+        try
+        {
+            if (deleteProject.Id <= 0)
+            {
+                Console.WriteLine("Ogiltigt projekt-ID.");
+                return;
+            }
+
+            var response = await http.DeleteAsync($"https://cvapi-h8g2cyhdg0duatgb.swedencentral-01.azurewebsites.net/api/project/{deleteProject.Id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Projekt med ID {deleteProject.Id} togs bort.");
+                deleteProject = new Skill(); // Nollställ formuläret
+                StateHasChanged();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Console.WriteLine($"Projekt med ID {deleteProject.Id} hittades inte.");
+            }
+            else
+            {
+                Console.WriteLine("Fel vid borttagning av projekt: " + response.StatusCode);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Exception: " + ex.Message);
+        }
+    }
+}

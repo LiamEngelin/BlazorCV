@@ -1,0 +1,65 @@
+﻿@page "/admin/create"
+@inject NavigationManager NavigationManager
+@inject HttpClient http
+@rendermode InteractiveServer
+
+<h3 style="z-index: 2; position: absolute; color: white; transform: translateX(-50%); left: 50%; top: 15%;">Create Project</h3>
+<div class="container-fluid" style="z-index:200;">
+    <EditForm Model="newProject" OnValidSubmit="CreateProject">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="projectName">Name</label>
+            <InputText id="projectName" class="form-control"
+            @bind-Value="newProject.Name" />
+        </div>
+
+        <div class="form-group">
+            <label for="projectDescription">Description</label>
+            <InputText id="projectDescription" class="form-control" rows="5"
+            @bind-Value="newProject.Description" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Create Project
+        </button>
+    </EditForm>
+</div>
+
+@code {
+    private Project newProject = new Project();
+
+    protected override void OnInitialized()
+    {
+
+
+    }
+
+    private async Task CreateProject()
+    {
+        try
+        {
+
+
+            var response = await http.PostAsJsonAsync("https://cvapi-h8g2cyhdg0duatgb.swedencentral-01.azurewebsites.net/api/project", newProject);
+            if (response.IsSuccessStatusCode)
+            {
+                newProject.Name = "";
+                newProject.Description = "";
+                StateHasChanged();
+                Console.WriteLine("project created:" + newProject.Name);
+                
+            }
+            else
+            {
+                StateHasChanged();
+                Console.WriteLine("Error creating project: " + response.StatusCode);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Exception: " + ex.Message);
+        }
+    }
+}

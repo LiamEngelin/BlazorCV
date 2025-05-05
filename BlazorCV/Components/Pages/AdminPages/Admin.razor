@@ -1,34 +1,12 @@
-﻿@page "/admin"
+﻿@rendermode InteractiveServer
+@page "/admin"
 @using System.ComponentModel.DataAnnotations
 @inject NavigationManager NavigationManager
 
 <h1 class="admin-header">Admin Panel</h1>
 
 <div class="btn-container">
-    <button class="btn btn-primary" @onclick="NavigateToCreate">Create</button>
-    <button class="btn btn-success" @onclick="NavigateToRead">Read</button>
-    <button class="btn btn-warning" @onclick="NavigateToEdit">Edit</button>
-    <button class="btn btn-danger" @onclick="NavigateToDelete">Delete</button>
+    <a class="btn btn-primary" href="/admin/create">Create</a>
+    <a class="btn btn-warning" href="/admin/edit">Edit</a>
+    <a class="btn btn-danger" href="/admin/delete">Delete</a>
 </div>
-
-@code {
-    private void NavigateToCreate()
-    {
-        NavigationManager.NavigateTo("/admin/create");
-    }
-
-    private void NavigateToRead()
-    {
-        NavigationManager.NavigateTo("/admin/read");
-    }
-
-    private void NavigateToEdit()
-    {
-        NavigationManager.NavigateTo("/admin/edit");
-    }
-
-    private void NavigateToDelete()
-    {
-        NavigationManager.NavigateTo("/admin/delete");
-    }
-}
