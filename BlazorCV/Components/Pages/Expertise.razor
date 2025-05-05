@@ -1,9 +1,49 @@
 ﻿@page "/expertise"
+@inject SkillService SkillService
 
-<PageTitle>Expertise</PageTitle>
+<PageTitle>Skills</PageTitle>
 
-<h3>Skills</h3>
+<div class="projects-page">
+    <h2 class="text-center mt-4" style="color:white">My Skills</h2>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger text-center">@errorMessage</div>
+    }
+    else if (SkillsList == null || SkillsList.Count == 0)
+    {
+        <p class="text-center">Loading skills...</p>
+    }
+    else
+    {
+        <div class="projects-wrapper">
+            @foreach (var skill in SkillsList)
+            {
+                if (skill == null) continue;
+
+                <div class="project-card">
+                    <h4>@skill.Name</h4>
+                    <p><strong>Level:</strong> @skill.Level</p>
+                    <p><strong>Years:</strong> @skill.Years</p>
+                </div>
+            }
+        </div>
+    }
+</div>
 
 @code {
+    private List<Skill> SkillsList = new();
+    private string errorMessage;
 
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            SkillsList = await SkillService.GetSkills();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Kunde inte ladda skills: " + ex.Message;
+        }
+    }
 }

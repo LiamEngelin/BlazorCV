@@ -18,7 +18,7 @@ namespace BlazorCV.Services
 
         public async Task<bool> AddProject(Project project)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/projects", project);
+            var response = await _httpClient.PostAsJsonAsync("api/project", project);
             return response.IsSuccessStatusCode;
         }
 
