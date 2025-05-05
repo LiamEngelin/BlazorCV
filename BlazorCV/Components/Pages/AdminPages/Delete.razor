@@ -1,60 +1,55 @@
 ﻿@page "/admin/delete"
-@inject NavigationManager NavigationManager
-@inject HttpClient http
+@inject ProjectService ProjectService
+@inject SkillService SkillService
 @rendermode InteractiveServer
 
-<h3 style="z-index: 2; position: absolute; color: white; transform: translateX(-50%); left: 50%; top: 15%;">Delete Project</h3>
+<h3 class="admin-header">Ta bort Project eller Skill</h3>
 
-<div class="container-fluid" style="z-index:200;">
-    <EditForm Model="deleteProject" OnValidSubmit="DeleteProject">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
+<div class="formDiv">
+    <form onsubmit="return false">
         <div class="form-group">
-            <label for="projectId">Project ID</label>
-            <InputNumber id="projectId" class="form-control"
-                         @bind-Value="deleteProject.Id" />
+            <label>Typ</label>
+            <select class="form-control" @bind="selectedType">
+                <option value="project">Project</option>
+                <option value="skill">Skill</option>
+            </select>
         </div>
 
-        <button type="submit" class="btn btn-danger">
-            Delete Project
-        </button>
-    </EditForm>
+        <InputNumber class="form-control mt-2" placeholder="ID att ta bort" @bind-Value="itemId" />
+        <button class="btn btn-danger mt-3" type="button" @onclick="DeleteItem">Ta bort</button>
+
+        @if (!string.IsNullOrEmpty(statusMessage))
+        {
+            <div class="alert mt-3">@statusMessage</div>
+        }
+    </form>
 </div>
 
 @code {
-    private Skill deleteProject = new Skill();
+    private string selectedType = "project";
+    private int itemId;
+    private string statusMessage = "";
 
-    private async Task DeleteProject()
+    private async Task DeleteItem()
     {
+        statusMessage = "";
+
         try
         {
-            if (deleteProject.Id <= 0)
-            {
-                Console.WriteLine("Ogiltigt projekt-ID.");
-                return;
-            }
+            bool success;
 
-            var response = await http.DeleteAsync($"https://cvapi-h8g2cyhdg0duatgb.swedencentral-01.azurewebsites.net/api/project/{deleteProject.Id}");
-
-            if (response.IsSuccessStatusCode)
-            {
-                Console.WriteLine($"Projekt med ID {deleteProject.Id} togs bort.");
-                deleteProject = new Skill(); // Nollställ formuläret
-                StateHasChanged();
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                Console.WriteLine($"Projekt med ID {deleteProject.Id} hittades inte.");
-            }
+            if (selectedType == "project")
+                success = await ProjectService.RemoveProject(itemId);
             else
-            {
-                Console.WriteLine("Fel vid borttagning av projekt: " + response.StatusCode);
-            }
+                success = await SkillService.RemoveSkill(itemId);
+
+            statusMessage = success
+                ? $"{selectedType.ToUpper()} med ID {itemId} togs bort."
+                : $"{selectedType.ToUpper()} hittades inte eller kunde inte tas bort.";
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Exception: " + ex.Message);
+            statusMessage = $"Fel: {ex.Message}";
         }
     }
 }

@@ -266,6 +266,7 @@ html, body {
 .projects-page {
     display: block; 
     width: 100%;
+    z-index: 2;
 }
 
 .projects-wrapper {
@@ -274,6 +275,7 @@ html, body {
     justify-content: center;
     gap: 2rem;
     padding: 2rem;
+    z-index: 2;
 }
 
 .project-card {
