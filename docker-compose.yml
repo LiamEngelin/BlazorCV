@@ -1,0 +1,40 @@
+services:
+  blazorcv-api:
+    build:
+      context: ./BlazorCV-API/BlazorCV-Api
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - cvnetwork
+    depends_on:
+      - sqlserver
+
+  blazorcv-frontend:
+    build:
+      context: ./BlazorCV/BlazorCV
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - blazorcv-api
+    networks:
+      - cvnetwork
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "Password123!"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlvolume:/var/opt/mssql
+    networks:
+      - cvnetwork
+
+networks:
+  cvnetwork:
+
+volumes:
+  sqlvolume:
